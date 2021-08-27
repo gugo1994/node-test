@@ -19,6 +19,9 @@ Account.init({
             }
         }
     },
+    avatar: {
+        type: DataTypes.TEXT
+    },
     password: {
         type: DataTypes.STRING,
         allowNull: false,

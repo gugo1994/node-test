@@ -15,21 +15,24 @@ exports.show = async (req, res) => {
 
 exports.store = async (req, res) => {
 
-    const {username, email, password, confirm_password} = req.body
+    const {username,avatar, email, password, confirm_password} = req.body
 
     if (password !== confirm_password) {
         return res.status(400).send('Confirm your password')
     }
+
     await Account.create({
         username,
         email,
+        avatar,
         password
-    }).then((obj) => {
+    }).then(async (obj) => {
         return res.status(200).send({
             username: obj.username,
             email: obj.email
         })
     }).catch((onerror) => {
+        console.log(onerror)
         return res.status(400).send(onerror.errors[0].message)
     });
 }

@@ -3,10 +3,12 @@ const bodyParser= require('body-parser')
 require('dotenv').config()
 const accountRoute = require('./routes/account');
 const sequelize = require("./db/mariadb");
-
+const helmet = require('helmet')
 const app = express()
+
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json());
+app.use(helmet())
 
 const allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');

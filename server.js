@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser= require('body-parser')
 require('dotenv').config()
-const routes = require('./routes/index');
+const accountRoute = require('./routes/account');
 const sequelize = require("./db/mariadb");
 
 const app = express()
@@ -16,7 +16,7 @@ const allowCrossDomain = function(req, res, next) {
 }
 app.use(allowCrossDomain)
 
-app.use('/', routes);
+app.use('/account', accountRoute);
 
 sequelize.sync();
 

@@ -5,10 +5,36 @@ const bcrypt = require('bcrypt');
 class Account extends Model {}
 
 Account.init({
-    username: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING
-}, { sequelize, modelName: 'account' });
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+            isEmail: {
+                msg: "Must be a valid email address",
+            }
+        }
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            len: {
+                args: [8],
+                msg: "The password length should be minimum 8 characters."
+            }
+        },
+    }
+
+}, { sequelize, modelName: 'account' ,  indexes: [{
+        fields: ['email'],
+        unique: true
+    }]
+    ,});
 
 Account.addHook('beforeCreate', async (account, options) => {
     if (account.password) {

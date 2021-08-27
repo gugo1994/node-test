@@ -1,8 +1,14 @@
-const { Model, DataTypes } = require('sequelize');
+const {Model, DataTypes} = require('sequelize');
 const sequelize = require('../db/mariadb')
 const bcrypt = require('bcrypt');
 
-class Account extends Model {}
+class Account extends Model {
+}
+
+async function updatePassword(account){
+    const salt = await bcrypt.genSaltSync(10, 'a');
+    account.password = bcrypt.hashSync(account.password, salt);
+}
 
 Account.init({
     username: {
@@ -15,7 +21,7 @@ Account.init({
         unique: true,
         validate: {
             isEmail: {
-                msg: "Must be a valid email address",
+                msg: 'Must be a valid email address',
             }
         }
     },
@@ -28,27 +34,26 @@ Account.init({
         validate: {
             len: {
                 args: [8],
-                msg: "The password length should be minimum 8 characters."
+                msg: 'The password length should be minimum 8 characters.'
             }
-        },
+        }
     }
 
-}, { sequelize, modelName: 'account' ,  indexes: [{
+}, {
+    sequelize, modelName: 'account', indexes: [{
         fields: ['email'],
         unique: true
     }]
-    ,});
+});
 
-Account.addHook('beforeCreate', async (account, options) => {
+Account.addHook('beforeCreate',  (account, options) => {
     if (account.password) {
-        const salt = await bcrypt.genSaltSync(10, 'a');
-        account.password = bcrypt.hashSync(account.password, salt);
+        updatePassword(account)
     }
 });
-Account.addHook('beforeUpdate', async (account, options) => {
-    if (options.fields.includes("password")) {
-        const salt = await bcrypt.genSaltSync(10, 'a');
-        account.password = bcrypt.hashSync(account.password, salt);
+Account.addHook('beforeUpdate',  (account, options) => {
+    if (options.fields.includes('password')) {
+        updatePassword(account)
     }
 });
 
